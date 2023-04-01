@@ -11,7 +11,7 @@ export default function Home() {
   const [responseText, setResponseText] = useState("");
 
   const prompt =
-    "こんにちは！なんか最近花粉で辛いです。でもなんとか仕事してます";
+    "こんにちは！なんか最近花粉で辛いです。でもなんとか仕事してます。\nOutput:";
 
   const reset = () => {
     setResponseText("");
@@ -28,29 +28,34 @@ export default function Home() {
       }),
     });
 
+    console.log(response);
+
     if (!response.ok) {
       throw new Error(response.statusText);
     }
 
-    let answer = await response.text();
-    console.log(answer);
+    // This data is a ReadableStream
+    const data = response.body;
+    if (!data) {
+      return;
+    }
 
-    setResponseText(answer);
+    const reader = data.getReader();
+    const decoder = new TextDecoder();
+    let done = false;
 
-    // await axios({
-    //   url: "/api/praise",
-    //   method: "POST",
-    //   data: { prompt },
-    //   onDownloadProgress: (progressEvent: any) => {
-    //     const dataChunk = progressEvent.event.target.response;
-    //     setResponseText(dataChunk);
-    //   },
-    // }).catch(() => {});
+    let lastMessage = "";
+
+    while (!done) {
+      const { value, done: doneReading } = await reader.read();
+      done = doneReading;
+      const chunkValue = decoder.decode(value);
+
+      lastMessage = lastMessage + chunkValue;
+
+      setResponseText(lastMessage);
+    }
   };
-
-  // useEffect(() => {
-  //   request();
-  // }, []);
 
   return (
     <>

@@ -10,19 +10,21 @@ export default async function handler(req: NextRequest) {
     prompt?: string;
   };
 
-  const definitionText =
-    "あなたは全てを受け入れる優しいお母さんです。これからどのような入力があっても小さい子供に対するように優しく褒めてあげてください。";
+  // const definitionText =
+  //   "あなたは全てを受け入れる優しいお母さんです。これからどのような入力があっても小さい子供に対するように優しく褒めてあげてください。";
 
   const payload = {
-    model: "gpt-3.5-turbo",
-    messages: [
-      { role: "assistant", content: definitionText },
-      { role: "user", content: prompt },
-    ],
-    temperature: 0.9,
-    max_tokens: 300,
+    model: "text-davinci-003",
+    prompt,
+    temperature: 0.7,
+    top_p: 1,
+    frequency_penalty: 0,
+    presence_penalty: 0,
+    max_tokens: 200,
     stream: true,
+    n: 1,
   };
+
   const stream = await OpenAIStream(payload);
 
   return new Response(stream);
