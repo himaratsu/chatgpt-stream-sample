@@ -57,8 +57,8 @@ export default function Home() {
   7OxK8vWm2V: string, required, up to 30 words
   kUuAj-FfPU: string, optional, up to 200 words
   // TUih6BRWnR: markdown
-  yU2QE9YmvZ: select one from ["更新情報", "チュートリアル", "コラム"]
-  VaLbjTNGLF: select multiple from ["Next", "Nuxt", "Flutter", "Swift"]
+  yU2QE9YmvZ: select one from ["更新情報", "チュートリアル", "コラム"] (Choose the closest to the context)
+  VaLbjTNGLF: select multiple from ["Next", "Nuxt", "Flutter", "Swift"] (Choose the closest to the context)
   ===========================
   
   #task_1
