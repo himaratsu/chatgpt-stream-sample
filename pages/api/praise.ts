@@ -25,6 +25,17 @@ export default async function handler(req: NextRequest) {
       
       #notes
       - Response must be Japanese
+      - "undefined" means that the user has not yet entered any information
+      - Set "undefined" to clear fieldValue
+
+      #OutputFormat
+      Output text is "[fieldId]fieldValue"
+      example is following:
+      --------------
+      [9fds1S90fd]ここに内容
+      [kfgds3fdDa]ここに内容
+      [end]
+      --------------
       `,
     },
   ];
@@ -34,7 +45,8 @@ export default async function handler(req: NextRequest) {
   console.log(messages);
 
   const payload = {
-    model: "gpt-3.5-turbo",
+    // model: "gpt-3.5-turbo",
+    model: "gpt-4",
     messages: messages,
     temperature: process.env.AI_TEMP ? parseFloat(process.env.AI_TEMP) : 0.7,
     max_tokens: 2048,

@@ -21,32 +21,33 @@ const inter = Inter({ subsets: ["latin"] });
 export default function Home() {
   const [responseText, setResponseText] = useState("");
 
-  const prompt = `#contents
+  const request = async () => {
+    const prompt = `#contents
   [
   {
   "fieldId": "7OxK8vWm2V",
   "fieldName": "タイトル",
-  "content": "Datadogの外形監視でログインできない問題"
+  "filedValue": ${title != "" ? title : "undefined"}
   },
   {
   "fieldId": "kUuAj-FfPU",
   "fieldName": "概要",
-  "content": "undefined"
+  "filedValue": ${description != "" ? description : "undefined"}
   },
   // {
   // "fieldId": "TUih6BRWnR",
   // "fieldName": "本文",
-  // "content": "undefined"
+  // "filedValue": "undefined"
   // },
   {
   "fieldId": "yU2QE9YmvZ",
   "fieldName": "カテゴリ",
-  "content": "null"
+  "filedValue": ${category != "" ? category : "undefined"}
   },
   {
   "fieldId": "VaLbjTNGLF",
   "fieldName": "タグ",
-  "content": "Datadog, ログ分析"
+  "filedValue": ${tags != "" ? tags : "undefined"}
   },
   ]
   
@@ -60,20 +61,17 @@ export default function Home() {
   VaLbjTNGLF: select multiple from ["Next", "Nuxt", "Flutter", "Swift"]
   ===========================
   
-  #task
-  - 「全てのフィールドにランダムな値を生成してください」
-  
-  #OutputFormat
-  Output text is "[fieldId]content". example is following:
-  --------------
-  [9fds1S90fd]
-  これはタイトルです
-  [kfgds3fdDa]
-  これは概要です
-  [end]
-  --------------`;
+  #task_1
+  入力された文章から、ベースとなるフィールド（baseField）と変更ターゲットとなるフィールド（targetField）を抜き出して下さい。
+  - 「${input}」
 
-  const request = async () => {
+  #task_2
+  - 「${input}」
+  - 出力は[targetField]のfieldIdとfieldValueだけ
+  `;
+
+    console.log(prompt);
+
     const response = await fetch("/api/praise", {
       method: "POST",
       headers: {
@@ -126,6 +124,10 @@ export default function Home() {
         const key = keyValue[0];
         const value = keyValue[1];
 
+        if (value.trim() == "undefined" || value.trim() == "null") {
+          continue;
+        }
+
         if (key == "7OxK8vWm2V") {
           setTitle(value);
         } else if (key == "kUuAj-FfPU") {
@@ -139,7 +141,14 @@ export default function Home() {
     }
   };
 
-  const [title, setTitle] = useState("");
+  const tasks = [
+    "タイトルから概要を生成して",
+    "タイトルからカテゴリを生成して",
+    "ランダムな値を埋めて",
+  ];
+  const randomIndex = Math.floor(Math.random() * tasks.length);
+  const [input, setInput] = useState(tasks[randomIndex]);
+  const [title, setTitle] = useState("AppleとGoogleの企業文化の違い");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [tags, setTags] = useState("");
@@ -148,7 +157,11 @@ export default function Home() {
     <main>
       <div className="container mx-auto mt-32">
         <Group position="center">
-          <TextInput className="w-64" value="ランダムに値を生成してください" />
+          <TextInput
+            className="w-64"
+            value={input}
+            onChange={(event) => setInput(event.currentTarget.value)}
+          />
           <Button onClick={request}>Generate Text</Button>
         </Group>
         <Flex className="mt-24">
